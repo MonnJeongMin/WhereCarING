@@ -8,18 +8,17 @@ const ManagerBox = ({children, style, display, width}) => {
   const { wide, phone } = width||{ wide: '500px', phone: '20rem'};
   const ManagerPaper = styled(Paper)`
     width: ${wide};
-    height: 40rem;
-    margin-right: 2rem;
+    height: 600px;
     ${media.wide`
       width: ${wide};
       margin-right: 2rem;
     `}
     ${media.phone`
       width: ${phone};
-      height: 40rem;
+      height: 500px;
       margin-top: 1rem;
       margin-right: 0rem;
-      display: ${display?'none':'flex'}
+      display: ${display?'none':'block'}
     `}
   `;
 

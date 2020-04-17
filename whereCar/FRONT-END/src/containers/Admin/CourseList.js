@@ -3,20 +3,21 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import Card from "@material-ui/core/Card";
-import { ListWrapper, BottomNav } from 'components/List';
 import CardHeader from "@material-ui/core/CardHeader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Checkbox from "@material-ui/core/Checkbox";
-import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import DeleteIcon from "@material-ui/icons/Delete";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
-import { LogoWrapper } from 'components/List/Car';
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import {AdminWrapper} from 'components/Admin';
+import GolfCourseIcon from '@material-ui/icons/GolfCourse';
+import InfoIcon from '@material-ui/icons/Info';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 //스타일 시트
 const useStyles = makeStyles(theme => ({
@@ -27,10 +28,17 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2)
   },
   list: {
-    width: 300,
-    height: 230,
+    height: 350,
+    backgroundColor: theme.palette.background.paper,
     overflow: "auto"
   },
+  addcar: {
+    backgroundColor: theme.palette.background.paper,
+    overflow: "auto" 
+  },
+  card: {
+      padding: 10
+  }
 }));
 
 //집합 함수들
@@ -48,25 +56,25 @@ function union(a, b) {
 
 //더미 데이터
 const dummyRole = {
-  Users: ["김복근", "요를레이", "시발", "안해"]
+  Users: ["경로1", "경로2", "경로3", "경로4"]
 };
 
-export default function UserListModify() {
+export default function CousrseListModify({history}) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState([]);
   const [value, setValue] = React.useState(0);
-  const [userlists, setuserlists] = React.useState({
+  const [Carlists, setCarlists] = React.useState({
     data: dummyRole["Users"]
   });
-  const UD = userlists.data;
+  const CD = Carlists.data;
 
   //현재 리스트와 체크된 것의 교집합
-  const Listchecked = intersection(UD, checked);
+  const Listchecked = intersection(CD, checked);
   // 리스트에서 해당 데이터를 삭제하기
-  const deleteUser = () => {
-    setuserlists({
-      ...userlists,
-      data: not(UD, checked)
+  const deleteCar = () => {
+    setCarlists({
+      ...Carlists,
+      data: not(CD, checked)
     });
     setChecked(not(Listchecked, checked));
   };
@@ -94,11 +102,9 @@ export default function UserListModify() {
     }
   };
 
-
   const customList = (title, items) => (
-    <ListWrapper>
-      <LogoWrapper title="User List" titleUrl="/">
-      </LogoWrapper>
+    <Card>
+      <AdminWrapper>
       <CardHeader
         className={classes.cardHeader}
         avatar={
@@ -138,25 +144,39 @@ export default function UserListModify() {
                   inputProps={{ "aria-labelledby": labelId }}
                 />
               </ListItemIcon>
+              <GolfCourseIcon className={classes.icon}/>
               <ListItemText id={labelId} primary={`${value}`} />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="info">
+                  <InfoIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
           );
         })}
         <ListItem />
       </List>
-      <BottomNavigation
-        value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
-        showLabels
-        className={classes.root}
-      >
-        <BottomNavigationAction label="Delete" onClick={deleteUser} icon={<DeleteIcon />} />
-        <BottomNavigationAction label="Notification" icon={<FavoriteIcon />} />
-      </BottomNavigation>
-
-    </ListWrapper>
+          <BottomNavigation
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            showLabels
+            className={classes.root}
+          >
+            <BottomNavigationAction
+              label="Delete"
+              onClick={deleteCar}
+              icon={<DeleteIcon />}
+            />
+            <BottomNavigationAction
+              label="Add"
+              icon={<AddCircleIcon />}
+              onClick={ () =>  {history.push('/admin/courses/register')} }
+            />
+          </BottomNavigation>
+          </AdminWrapper>
+    </Card>
   );
 
   return (
@@ -167,8 +187,8 @@ export default function UserListModify() {
       alignItems="center"
       className={classes.root}
     >
-      <Grid>
-        {customList("유저 목록", UD)}
+      <Grid item xs={10} sm={6}>
+        {customList("경로 목록", CD)}
       </Grid>
     </Grid>
   );

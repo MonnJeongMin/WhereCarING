@@ -9,6 +9,7 @@ const {
 const Koa = require('koa');
 const serve = require('koa-static');
 const path = require('path');
+const fs = require('fs');
 const send = require('koa-send'); 
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
@@ -28,14 +29,26 @@ db.connect();
 
 const app = new Koa();
 app.use(serve(path.join(__dirname, '../../FRONT-END/build')));
+app.use(serve(path.join(__dirname, './uploads')));
 
 app.use(helmet());
 app.use(jwtMiddleware);
-app.use(bodyParser());
+app.use(bodyParser({
+  formidable: { uploadDir: './uploads' }, // This is where the files would come
+  multipart: true,
+  urlencoded: true
+}));
 
 const router = new Router();
 /* /... */
 router.use('/api', api.routes());
+
+// 업로드된 이미지 제공하기
+router.get('/uploads/:fileurl', async (ctx, next) => {
+  const { fileurl } = ctx.params;
+  await send(ctx, './uploads/' + fileurl);
+});
+
 router.get('/', async (ctx, next) => {
   const mainPath = path.join(__dirname, '../../FRONT-END/build');
   await send(ctx, 'index.html', { root: mainPath });
